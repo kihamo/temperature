@@ -5,9 +5,11 @@
     <link rel="icon" type="image/ico" href="{{ url_for('static', filename='favicon.ico') }}" />
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://dygraphs.com/dygraph-combined.js"></script>
     <script type="text/javascript">
       google.load('visualization', '1', {packages:['gauge']});
       google.setOnLoadCallback(drawChart);
+      google.setOnLoadCallback(drawHistory);
       
       function drawChart() {
         var jsonData = $.ajax({
@@ -43,10 +45,35 @@
         var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
+      
+      function drawHistory() {
+        
+          var jsonData = $.ajax({
+            url: '/history',
+            dataType:'json',
+            async: false
+          }).responseJSON
+
+          var data = [];  
+
+          $.each(jsonData, function (key, value){
+            var date = new Date (value.date + '+0400');
+            data.push([date, value.temperature]);
+          })
+
+          var g = new Dygraph(document.getElementById("history_div"), data,
+          {
+            drawPoints: true,
+            // showRoller: true,
+            // valueRange: [0.0, 1.2],
+            labels: ['Время', 'Температура']
+          });
+      }
     </script>
   </head>
   <body>
     <h2 style="font-family: Comic Sans MS">Банька 2.0</h2>
     <div id="chart_div"></div>
+    <div id="history_div"></div>
   </body>
 </html>
