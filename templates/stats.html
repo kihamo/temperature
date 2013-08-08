@@ -22,7 +22,7 @@
         ])
 
         var formatter = new google.visualization.NumberFormat({
-          pattern: '#,##',
+          pattern: '#.#',
           negativeColor: 'red',
           negativeParens: true
         })
@@ -42,9 +42,6 @@
 
         var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
         chart.draw(data, options);
-        
-        //Google не хочет показывать дробные значения, так впишем все сами!
-        $('svg g g text').text(jsonData.temperature);
       }
     </script>
   </head>
