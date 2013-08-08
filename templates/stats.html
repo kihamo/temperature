@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/ico" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='favicon.ico') }}" />
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1', {packages:['gauge']});
+      google.setOnLoadCallback(drawChart);
+      
+      function drawChart() {
+        var jsonData = $.ajax({
+          url: '/now',
+          dataType:'json',
+          async: false
+        }).responseJSON
+
+        var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['Temp °C', jsonData.temperature]
+        ])
+
+        var formatter = new google.visualization.NumberFormat({
+          pattern: '#,##',
+          negativeColor: 'red',
+          negativeParens: true
+        })
+        formatter.format(data, 1)
+
+        var options = {
+          width: 300, height: 300,
+          min: 15, max: 35, minorTicks: 5,
+          majorTicks: 5,
+          majorTicks:[15, 20, 25, 30, 35],
+
+          redFrom: 15, redTo: 21.9, redColor: 'red',
+          yellowFrom: 25, yellowTo: 35, yellowColor: 'red',
+          greenFrom: 21.9, greenTo: 25         
+          
+        }
+
+        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <h2 style="font-family: Comic Sans MS">Банька 2.0</h2>
+    <div id="chart_div"></div>
+  </body>
+</html>
