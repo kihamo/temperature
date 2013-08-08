@@ -1,8 +1,9 @@
 #! /usr/bin/python
 
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask.ext.restful import Api, Resource, fields, marshal_with
 import subprocess
+import os
 
 app = Flask(__name__)
 
@@ -13,6 +14,12 @@ View
 @app.route('/')
 def show_stats():
   return render_template('stats.html')
+
+@app.route('/favicon.ico')
+def favicon():
+  return send_from_directory(os.path.join(app.root_path, 'static'),
+         'favicon.ico',
+         mimetype='image/vnd.microsoft.icon')
 
 '''
 API
