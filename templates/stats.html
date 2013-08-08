@@ -5,9 +5,8 @@
     <link rel="icon" type="image/ico" href="{{ url_for('static', filename='favicon.ico') }}" />
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" src="http://dygraphs.com/dygraph-combined.js"></script>
     <script type="text/javascript">
-      google.load('visualization', '1', {packages:['gauge']});
+      google.load('visualization', '1', {packages:['gauge', 'corechart']});
       google.setOnLoadCallback(drawChart);
       google.setOnLoadCallback(drawHistory);
       
@@ -18,10 +17,10 @@
           async: false
         }).responseJSON
 
-        var data = google.visualization.arrayToDataTable([
-          ['Label', 'Value'],
-          ['Temp °C', jsonData.temperature]
-        ])
+        var data = new google.visualization.DataTable()
+        data.addColumn('string', 'Label')
+        data.addColumn('number', 'Value')
+        data.addRow(['Temp °C', jsonData.temperature])
 
         var formatter = new google.visualization.NumberFormat({
           pattern: '#.#',
@@ -42,38 +41,42 @@
           
         }
 
-        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
-        chart.draw(data, options);
+        var chart = new google.visualization.Gauge(document.getElementById('last'))
+        chart.draw(data, options)
       }
       
       function drawHistory() {
-        
-          var jsonData = $.ajax({
-            url: '/history',
-            dataType:'json',
-            async: false
-          }).responseJSON
+        var jsonData = $.ajax({
+          url: '/history',
+          dataType:'json',
+          async: false
+        }).responseJSON
 
-          var data = [];  
+        var data = new google.visualization.DataTable()
+        data.addColumn('datetime', 'Дата')
+        data.addColumn('number', 'Температура')
 
-          $.each(jsonData, function (key, value){
-            var date = new Date (value.date + '+0400');
-            data.push([date, value.temperature]);
-          })
+        $.each(jsonData, function (key, value) {
+          data.addRow([new Date (value.date + '+0400'), value.temperature])
+        })
 
-          var g = new Dygraph(document.getElementById("history_div"), data,
-          {
-            drawPoints: true,
-            // showRoller: true,
-            // valueRange: [0.0, 1.2],
-            labels: ['Время', 'Температура']
-          });
+        var options = {
+          title: 'Температура за сутки',
+          width: 800, height: 400,
+          legend: {position: 'none'},
+          pointSize: 3,
+          hAxis: {title: 'Дата'},
+          vAxis: {title: 'Температура °C'}
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('history'))
+        chart.draw(data, options)
       }
     </script>
   </head>
   <body>
     <h2 style="font-family: Comic Sans MS">Банька 2.0</h2>
-    <div id="chart_div"></div>
-    <div id="history_div"></div>
+    <div id="last"></div>
+    <div id="history"></div>
   </body>
 </html>
