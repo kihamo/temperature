@@ -57,7 +57,9 @@
         data.addColumn('number', 'Температура')
 
         $.each(jsonData, function (key, value) {
-          data.addRow([new Date (value.date + '+0400'), value.temperature])
+          var date = value.date;
+          date = date.replace(/-0000/gi, ''); //"-0000" JS парсит как UTC
+          data.addRow([new Date (date), value.temperature])
         })
 
         var options = {
