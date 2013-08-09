@@ -72,6 +72,11 @@
         var chart = new google.visualization.AreaChart(document.getElementById('history'))
         chart.draw(data, options)
       }
+      
+      window.setInterval(function () {
+        drawChart();
+        drawHistory();
+      }, 60*1000);
     </script>
   </head>
   <body>
