@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 
 from flask import Flask, g, render_template, send_from_directory
 from flask.ext.restful import Api, Resource 
