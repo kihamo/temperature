@@ -64,7 +64,7 @@ class Temperature(Resource):
 
 class TemperatureNow(Resource):
   def get(self):
-    value = subprocess.check_output(['owget', '-s', '3660', '/28.2950AF030000/temperature10']).strip()
+    value = subprocess.check_output(['owget', '/uncached/28.9C4CAF030000/temperature10']).strip()
     value = float(value)
     date = datetime.now()
  
