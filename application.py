@@ -81,7 +81,7 @@ class TemperatureList(Resource):
   def get(self):
     result = []
 
-    for row in query_db('select * from temperatures'):
+    for row in query_db('select * from temperatures where date >= date("now", "-1 day")'):
       result.append({
         'date': formatdate(timegm(row[1].utctimetuple())),
         'temperature': row[2]
